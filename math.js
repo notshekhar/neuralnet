@@ -171,5 +171,31 @@ class math {
     }
     return arr;
   }
+  static pixr(url, a, b){
+    let i = new Image(a,b);
+    i.src = url;
+    let canva = document.createElement("canvas");
+    canva.height = i.height;
+    canva.width = i.width;
+    let ctx = canva.getContext("2d");
+    let red=[];
+    let green=[];
+    let blue=[];
+    let alpha=[];
+    i.onload = function(){
+      ctx.drawImage(i, 0, 0, i.width, i.height);
+      // console.log(canva.toDataURL());
+      let d = ctx.getImageData(0,0,canva.width,canva.height).data;
+      for(let i=0; i<d.length; i+=4){
+        red.push(d[i]);
+        green.push(d[i+1]);
+        blue.push(d[i+2]);
+        alpha.push(d[i+3]);
+      }
+      // console.log({"red":red, "green": green, "blue": blue, "alpha": alpha});
+    }
+    return {"red":red, "green": green, "blue": blue, "alpha": alpha}
+  }
+
 
 }
