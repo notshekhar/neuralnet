@@ -95,7 +95,15 @@ class Matrix {
     }
     return this;
   }
-
+  copy(){
+    let m = new Matrix(this.rows, this.cols);
+    for(let i=0; i<this.rows; i++){
+      for(let j=0; j<this.cols; j++){
+        m.data[i][j] = m.data[i][j]
+      }
+    }
+    return m
+  }
   static map(matrix, func) {
     // Apply a function to every element of matrix
     return new Matrix(matrix.rows, matrix.cols)
@@ -121,86 +129,7 @@ class Matrix {
   }
 }
 
-if (typeof module !== 'undefined') {
+if (typeof exports === 'object') {
   module.exports = Matrix;
 }
 
-class math {
-  constructor() {
-
-  }
-  static findmax(arr) {
-    let n = 0;
-    let m;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i] > n) {
-        m = i;
-        n = arr[i];
-      }
-    }
-    return m;
-  }
-
-  static add(a, b) {
-    return a + b;
-  }
-  static subtract(a, b) {
-    return a - b;
-  }
-  static multiply(a, b) {
-    return a * b;
-  }
-  static divide(a, b) {
-    return a / b;
-  }
-  static sumArray(arr) {
-    let sum = 0;
-    for (let i = 0; i < arr.length; i++) {
-      sum += arr[i];
-    }
-    return sum;
-  }
-  static turn(arr) {
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] > 0.5) {
-        arr[i] = 1;
-      } else {
-        arr[i] = 0;
-      }
-    }
-    return arr;
-  }
-  static pixr(url, a, b) {
-    let i = new Image(a, b);
-    i.src = url;
-    let canva = document.createElement("canvas");
-    canva.height = i.height;
-    canva.width = i.width;
-    let ctx = canva.getContext("2d");
-    let red = [];
-    let green = [];
-    let blue = [];
-    let alpha = [];
-    i.onload = function () {
-      ctx.drawImage(i, 0, 0, i.width, i.height);
-      // console.log(canva.toDataURL());
-      let d = ctx.getImageData(0, 0, canva.width, canva.height).data;
-      for (let i = 0; i < d.length; i += 4) {
-        red.push(d[i]);
-        green.push(d[i + 1]);
-        blue.push(d[i + 2]);
-        alpha.push(d[i + 3]);
-      }
-      // console.log({"red":red, "green": green, "blue": blue, "alpha": alpha});
-    }
-    return {
-      "red": red,
-      "green": green,
-      "blue": blue,
-      "alpha": alpha
-    }
-  }
-
-
-}
-if (typeof exports === 'object') module.exports = Matrix
