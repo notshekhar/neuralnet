@@ -3,10 +3,10 @@
 Constructors:
 ```js
 // Neural network with 2 inputs, 1 hidden layer, 4 hidden nodes and 1 output
-let nn0 = new NeuralNetwork([2, 4, 1], 0.1);
+let nn0 = new NeuralNetwork([2, 4, 1]);
 
 // Neural network with 2 inputs, 2 hidden layers, 4 hidden nodes and 1 output
-let nn1 = new NeuralNetwork([2, 2, 4, 1], 0.3);
+let nn1 = new NeuralNetwork([2, 2, 4, 1]);
 ```
 
 Train and guess:
@@ -21,16 +21,40 @@ nn.query(testingData);
 Read and write from/to file:
 ```js
 // Reads from a (previously generated) JSON-file the nn-Data and returns a NeuralNetwork-object
-let data = nn.download();
+let model = nn.getModel();
 
 // Writes a JSON-file with the current "state" (weights and biases) of the NN
-nn.upload(data);
+let nn = NeuralNetwork.fromModel(model);
 ```
+
 Adjust the learning rate:
 ```js
 // Set the learning rate (Initially the learning rate is 0.1)
 nn.setLearningRate(0.01);
 ```
+
+Use different activation functions:
+```js
+// Set the activation function (By default Sigmoid will be used)
+nn.setActivation(activation_function, dactivation_function);
+```
+
+Use this library with genetic algorithms:
+```js
+// Make an exact and "independent" copy of a Neural Network
+let nn2 = nn1.copy();
+
+// Merge the weights and biases of two Neural Networks with a ratio of 50:50
+let merged = nn1.merge(nn2);
+
+// Merge the weights and biases of two Neural Networks with a custom ratio (here: 20:80)
+let merged = nnA.merge(nnB, 0.2);
+
+// Mutate the weights and biases of a Neural Network with custom probability
+nn.mutate(x=>x*0.1);
+```
+More detailed examples can be found below.
+
 ## Download
 
-If you want to use this library you can download [v0.1](https://github.com/notshekhar/neuralnet) here.
+If you want to use this library you can download [v0.2](https://www.npmjs.com/package/deepneuralnet) here or check the release tab of this repository.
