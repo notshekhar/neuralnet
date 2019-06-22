@@ -26,7 +26,11 @@ let data = nn.download();
 // Writes a JSON-file with the current "state" (weights and biases) of the NN
 nn.upload(data);
 ```
-
+Adjust the learning rate:
+```js
+// Set the learning rate (Initially the learning rate is 0.1)
+nn.setLearningRate(0.01);
+```
 ## Download
 
 If you want to use this library you can download [v0.1](https://github.com/notshekhar/neuralnet) here.
