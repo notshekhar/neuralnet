@@ -117,4 +117,4 @@ class NeuralNetwork {
     }
   }
 }
-module.exports = NeuralNetwork
+if (typeof exports === 'object') module.exports = NeuralNetwork
