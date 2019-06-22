@@ -98,14 +98,7 @@ class NeuralNetwork {
       "neurons": this.neurons,
       "weights": this.weights
     }
-
-    let datStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(arr));
-    let downloadNode = document.createElement("a");
-    downloadNode.setAttribute("href", datStr);
-    downloadNode.setAttribute("download", filename + ".json");
-    downloadNode.click();
-    downloadNode.remove();
-
+    return arr
   }
   upload(weights) {
     for (let i = 0; i < this.weights.length; i++) {
