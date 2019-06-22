@@ -1,4 +1,4 @@
-export default class Matrix {
+class Matrix {
   constructor(rows, cols) {
     this.rows = rows;
     this.cols = cols;
@@ -11,7 +11,7 @@ export default class Matrix {
   }
 
   static subtract(a, b) {
-    if(a.rows!==b.rows || a.cols!==b.cols){
+    if (a.rows !== b.rows || a.cols !== b.cols) {
       console.log('Columns and Rows of A must match Columns and Rows of B.');
       return;
     }
@@ -37,11 +37,11 @@ export default class Matrix {
 
   add(n) {
     if (n instanceof Matrix) {
-      if(this.rows!==n.rows || this.cols!==n.cols){
+      if (this.rows !== n.rows || this.cols !== n.cols) {
         console.log('Columns and Rows of A must match Columns and Rows of B.');
         return;
       }
-        return this.map((e, i, j) => e + n.data[i][j]);
+      return this.map((e, i, j) => e + n.data[i][j]);
     } else {
       return this.map(e => e + n);
     }
@@ -72,7 +72,7 @@ export default class Matrix {
 
   multiply(n) {
     if (n instanceof Matrix) {
-      if(this.rows!==n.rows || this.cols!==n.cols){
+      if (this.rows !== n.rows || this.cols !== n.cols) {
         console.log('Columns and Rows of A must match Columns and Rows of B.');
         return;
       }
@@ -112,8 +112,7 @@ export default class Matrix {
   }
 
   static deserialize(data) {
-    if(typeof data == 'string')
-    {
+    if (typeof data == 'string') {
       data = JSON.parse(data);
     }
     let matrix = new Matrix(data.rows, data.cols);
@@ -130,72 +129,78 @@ class math {
   constructor() {
 
   }
-  static findmax(arr){
+  static findmax(arr) {
     let n = 0;
     let m;
     for (var i = 0; i < arr.length; i++) {
-        if(arr[i]>n){
+      if (arr[i] > n) {
         m = i;
-       n = arr[i];
+        n = arr[i];
       }
     }
-            return m;
+    return m;
   }
 
-  static add(a,b){
-    return a+b;
+  static add(a, b) {
+    return a + b;
   }
-  static subtract(a,b){
-    return a-b;
+  static subtract(a, b) {
+    return a - b;
   }
-  static multiply(a,b){
-    return a*b;
+  static multiply(a, b) {
+    return a * b;
   }
-  static divide(a,b){
-    return a/b;
+  static divide(a, b) {
+    return a / b;
   }
-  static sumArray(arr){
+  static sumArray(arr) {
     let sum = 0;
     for (let i = 0; i < arr.length; i++) {
-      sum+=arr[i];
+      sum += arr[i];
     }
     return sum;
   }
-  static turn(arr){
-    for(let i=0; i<arr.length; i++){
-      if(arr[i]>0.5){
-        arr[i]=1;
-      }else {
-        arr[i]=0;
+  static turn(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] > 0.5) {
+        arr[i] = 1;
+      } else {
+        arr[i] = 0;
       }
     }
     return arr;
   }
-  static pixr(url, a, b){
-    let i = new Image(a,b);
+  static pixr(url, a, b) {
+    let i = new Image(a, b);
     i.src = url;
     let canva = document.createElement("canvas");
     canva.height = i.height;
     canva.width = i.width;
     let ctx = canva.getContext("2d");
-    let red=[];
-    let green=[];
-    let blue=[];
-    let alpha=[];
-    i.onload = function(){
+    let red = [];
+    let green = [];
+    let blue = [];
+    let alpha = [];
+    i.onload = function () {
       ctx.drawImage(i, 0, 0, i.width, i.height);
       // console.log(canva.toDataURL());
-      let d = ctx.getImageData(0,0,canva.width,canva.height).data;
-      for(let i=0; i<d.length; i+=4){
+      let d = ctx.getImageData(0, 0, canva.width, canva.height).data;
+      for (let i = 0; i < d.length; i += 4) {
         red.push(d[i]);
-        green.push(d[i+1]);
-        blue.push(d[i+2]);
-        alpha.push(d[i+3]);
+        green.push(d[i + 1]);
+        blue.push(d[i + 2]);
+        alpha.push(d[i + 3]);
       }
       // console.log({"red":red, "green": green, "blue": blue, "alpha": alpha});
     }
-    return {"red":red, "green": green, "blue": blue, "alpha": alpha}
+    return {
+      "red": red,
+      "green": green,
+      "blue": blue,
+      "alpha": alpha
+    }
   }
 
 
 }
+if (typeof exports === 'object') module.exports = Matrix
