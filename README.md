@@ -57,4 +57,4 @@ More detailed examples can be found below.
 
 ## Download
 
-If you want to use this library you can download [v0.2](https://www.npmjs.com/package/deepneuralnet) here or check the release tab of this repository.
+If you want to use this library you can download [v1.2.0](https://www.npmjs.com/package/deepneuralnet) here or check the release tab of this repository.
