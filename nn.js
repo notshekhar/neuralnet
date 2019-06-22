@@ -23,17 +23,29 @@ function dsigmoid(y) {
 
 class NeuralNetwork {
   constructor(arr, lr) {
-    this.neurons = [];
-    this.weights = [];
-    this.lr = lr || 0.01;
-    let arrlen = arr.length;
-    for (let i = 0; i < arrlen; i++) {
-      this.neurons.push(arr[i]);
-    }
-    for (let i = 0; i < arrlen - 1; i++) {
-      let weight = new Matrix(this.neurons[i + 1], this.neurons[i]);
-      weight.randomize();
-      this.weights.push(weight);
+    if(arr instanceof NeuralNetwork){
+      this.weights = []
+      for(let i=0; i<arr.weights.length; i++){
+        this.weights.push(arr.weights[i].copy())
+      }
+      this.neurons = []
+      for (let i = 0; i < arr.neurons.length; i++) {
+        this.neurons.push(arr.neurons[i].copy())
+      }
+      this.lr = arr.lr
+    }else{
+      this.neurons = [];
+      this.weights = [];
+      this.lr = lr || 0.01;
+      let arrlen = arr.length;
+      for (let i = 0; i < arrlen; i++) {
+        this.neurons.push(arr[i]);
+      }
+      for (let i = 0; i < arrlen - 1; i++) {
+        let weight = new Matrix(this.neurons[i + 1], this.neurons[i]);
+        weight.randomize();
+        this.weights.push(weight);
+      }
     }
   }
   predict(inputarr) {
@@ -99,6 +111,15 @@ class NeuralNetwork {
       "weights": this.weights
     }
     return arr
+
+  }
+  copy(){
+    return new NeuralNetwork(this)
+  }
+  mutate(func){
+    for(let weight of this.weights){
+      weight.map(func)
+    }
   }
   upload(weights) {
     for (let i = 0; i < this.weights.length; i++) {
