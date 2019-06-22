@@ -1,3 +1,5 @@
+import Matrix from "./matrix"
+
 function sigmoid(x) {
   return 1 / (1 + Math.exp(-x));
 }
@@ -19,7 +21,7 @@ function dsigmoid(y) {
 // }
 
 
-class NeuralNetwork {
+export default class NeuralNetwork {
   constructor(arr,lr) {
     this.neurons = [];
     this.weights = [];
