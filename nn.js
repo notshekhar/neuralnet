@@ -1,134 +1,140 @@
 let Matrix = require("./matrix")
 
-function sigmoid(x) {
-  return 1 / (1 + Math.exp(-x));
-}
-
-
-function dsigmoid(y) {
-  // return sigmoid(x) * (1s - sigmoid(x));
-  return y * (1 - y);
-}
-
-// function tanh(x) {
-//   var y = Math.tanh(x);
-//   return y;
-// }
-//
-// function dtanh(x) {
-//   var y = 1 / (pow(Math.cosh(x), 2));
-//   return y;
-// }
-
-
-class NeuralNetwork {
-  constructor(arr, lr) {
-    if(arr instanceof NeuralNetwork){
-      this.weights = []
-      for(let i=0; i<arr.weights.length; i++){
-        this.weights.push(arr.weights[i].copy())
+class NeuralNetwork{
+  constructor(arr, lr){
+    this.nodes = arr 
+    this.lr = lr || 0.01
+    this.activation = NeuralNetwork.sigmoid
+    this.dactivation = NeuralNetwork.dsigmoid
+    this.weights = []
+    this.biases = []
+    for(let i=0; i<this.nodes.length-1; i++){
+      this.weights.push(new Matrix(this.nodes[i+1], this.nodes[i]).randomize())
+    }
+    for (let i = 1; i < this.nodes.length; i++) {
+      this.biases.push(new Matrix(this.nodes[i], 1).randomize())
+    }
+  }
+  static tanh(x) {
+    var y = Math.tanh(x);
+    return y;
+  }
+  static dtanh(x) {
+    var y = 1 / (pow(Math.cosh(x), 2));
+    return y;
+  }
+  static sigmoid(x) {
+    return 1 / (1 + Math.exp(-x));
+  }
+  static dsigmoid(y) {
+    // return sigmoid(x) * (1s - sigmoid(x));
+    return y * (1 - y);
+  }
+  query(input_arr){
+    let input = Matrix.fromArray(input_arr)
+    for(let i=0; i<this.weights.length; i++){
+      input = Matrix.multiply(this.weights[i], input)
+      input.add(this.biases[i])
+      input.map(this.activation)
+    }
+    return input.toArray()
+  }
+  learn(input_arr, target_arr){
+    let target = Matrix.fromArray(target_arr)
+    let output = Matrix.fromArray(this.query(input_arr))
+    let O = []
+    let input = Matrix.fromArray(input_arr)
+    for(let i=0; i<this.weights.length; i++){
+      O.push(input)
+      input = Matrix.multiply(this.weights[i], input)
+      input.add(this.biases[i])
+      input.map(this.activation)
+    }
+    let error = Matrix.subtract(target, output)
+    let gradient = Matrix.map(output, this.dactivation)
+    gradient.multiply(error)
+    gradient.multiply(this.lr)
+    for(let i=O.length-1; i>=0; i--){
+      let dw = Matrix.multiply(gradient, Matrix.transpose(O[i]))
+      this.weights[i].add(dw)
+      this.biases[i].add(gradient)
+      error = Matrix.multiply(Matrix.transpose(this.weights[i]), error)
+      gradient = Matrix.map(O[i], this.dactivation)
+      gradient.multiply(error)
+      gradient.multiply(this.lr)
+    }
+  }
+  getModel(){
+    let model = this
+    let k = {
+      nodes: model.nodes,
+      lr: model.lr,
+      activation: model.activation,
+      dactivation: model.dactivation,
+      weights: [],
+      biases: []
+    }
+    for(let weight of model.weights){
+      let s = {
+        rows: weight.rows,
+        cols: weight.cols,
+        data: []
       }
-      this.neurons = []
-      for (let i = 0; i < arr.neurons.length; i++) {
-        this.neurons.push(arr.neurons[i].copy())
+      for(let d of weight.data){
+        let a = []
+        for(let l of d){
+          a.push(l)
+        }
+        s.data.push(a)
       }
-      this.lr = arr.lr
-    }else{
-      this.neurons = [];
-      this.weights = [];
-      this.lr = lr || 0.01;
-      let arrlen = arr.length;
-      for (let i = 0; i < arrlen; i++) {
-        this.neurons.push(arr[i]);
+      k.weights.push(s)
+    }
+    for (let bias of model.biases) {
+      let s = {
+        rows: bias.rows,
+        cols: bias.cols,
+        data: bias.data
       }
-      for (let i = 0; i < arrlen - 1; i++) {
-        let weight = new Matrix(this.neurons[i + 1], this.neurons[i]);
-        weight.randomize();
-        this.weights.push(weight);
+      k.biases.push(s)
+    }
+    return k
+  }
+  static formModel(model){
+    let nn = new NeuralNetwork(model.nodes, model.lr)
+    nn.nodes = model.nodes
+    nn.lr = model.lr
+    nn.activation = model.activation
+    nn.dactivation = model.dactivation
+    for (let i = 0; i < nn.weights.length; i++) {
+      nn.weights[i].rows = model.weights[i].rows
+      nn.weights[i].cols = model.weights[i].cols
+      for (let j = 0; j < model.weights[i].rows; j++) {
+        for (let k = 0; k < model.weights[i].cols; k++) {
+          nn.weights[i].data[j][k] = model.weights[i].data[j][k]
+        }
       }
+      nn.weights[i].rows = model.weights[i].rows
     }
-  }
-  predict(inputarr) {
-    let inputs = Matrix.fromArray(inputarr);
-    let outputs = [];
-    let weightlen = this.weights.length;
-    for (let i = 0; i < weightlen; i++) {
-      inputs = Matrix.multiply(this.weights[i], inputs);
-      inputs.map(sigmoid);
-      outputs.push(inputs);
-    }
-    return outputs;
-  }
-  query(arr) {
-    let outputs = this.predict(arr);
-    let output = outputs[outputs.length - 1].toArray();
-    return output;
-
-  }
-
-  learn(input, outputarr) {
-    let inputs = Matrix.fromArray(input);
-    let weightlen = this.weights.length;
-    for (let i = 0; i < weightlen; i++) {
-      inputs = Matrix.multiply(this.weights[i], inputs);
-      inputs.map(sigmoid);
-    }
-    let output = inputs;
-    let answer = Matrix.fromArray(outputarr);
-    let err = Matrix.subtract(answer, output);
-    let errors = [];
-    for (var i = this.weights.length - 1; i >= 0; i--) {
-      errors.push(err);
-      err = Matrix.multiply(Matrix.transpose(this.weights[i]), err);
-    }
-    errors.reverse();
-    let outputs = [];
-    let inpout = [];
-    inpout.push(Matrix.fromArray(input));
-    let inp = Matrix.fromArray(input)
-    for (let i = 0; i < weightlen; i++) {
-      inp = Matrix.multiply(this.weights[i], inp);
-      inp.map(sigmoid);
-      outputs.push(inp);
-      inpout.push(inp);
-    }
-
-    for (let i = 0; i < errors.length; i++) {
-      let gradient = errors[i].multiply(Matrix.map(outputs[i], dsigmoid));
-      let dweight = Matrix.multiply(gradient, Matrix.transpose(inpout[i]));
-      dweight.multiply(this.lr);
-      this.weights[i] = this.weights[i].add(dweight);
-    }
-  }
-  setLearningRate(learn) {
-    this.lr = learn;
-
-  }
-  download(filename) {
-    let arr = {
-      "lr": this.lr,
-      "neurons": this.neurons,
-      "weights": this.weights
-    }
-    return arr
-
+    return nn
   }
   copy(){
-    return new NeuralNetwork(this)
+    let model = this.getModel()
+    return NeuralNetwork.formModel(model)
   }
   mutate(func){
     for(let weight of this.weights){
       weight.map(func)
     }
-  }
-  upload(weights) {
-    for (let i = 0; i < this.weights.length; i++) {
-      for (let m = 0; m < this.weights[i].rows; m++) {
-        for (let n = 0; n < this.weights[i].cols; n++) {
-          this.weights[i].data[m][n] = weights[i].data[m][n];
-        }
-      }
+    for(let bias of this.biases){
+      bias.map(func)
     }
+  }
+  setActivation(activation, dactivation){
+    this.activation = activation 
+    this.dactivation = dactivation
+  }
+  setLearningRate(lr){
+    this.lr = lr
   }
 }
 if (typeof exports === 'object') module.exports = NeuralNetwork
