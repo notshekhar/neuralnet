@@ -19,7 +19,7 @@ function dsigmoid(y) {
 // }
 
 
-class fnn {
+class NeuralNetwork {
   constructor(arr,lr) {
     this.neurons = [];
     this.weights = [];
