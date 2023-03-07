@@ -12,10 +12,10 @@ let nn1 = new NeuralNetwork([2, 2, 4, 1]);
 Train and guess:
 ```js
 // Train the neural network with a training dataset (inputs and expected outputs)
-nn.learn(trainingDataInputs, trainingDataTargets);
+nn.train(trainingDataInputs, trainingDataTargets);
 
 // Guess for the given testing data is returned as an array (double[])
-nn.query(testingData);
+nn.query(testingDataSets);
 ```
 
 Read and write from/to file:
