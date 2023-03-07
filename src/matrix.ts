@@ -67,7 +67,7 @@ export default class Matrix {
             })
         )
         console.log(title || "", "(", this.rows, "x", this.cols, ")")
-        console.table(data)
+        // console.table(data)
         return this
     }
 
@@ -158,34 +158,27 @@ export default class Matrix {
         }
         return this
     }
-    multiply(n: number | Matrix): Matrix {
-        if (n instanceof Matrix) {
-            if (this.cols !== n.rows) {
-                console.error("Columns of A must match Rows of B.")
-                return this
-            }
-            const result = new Matrix(this.rows, n.cols)
-            for (let i = 0; i < result.rows; i++) {
-                for (let j = 0; j < result.cols; j++) {
-                    let sum = 0
-                    for (let k = 0; k < this.cols; k++) {
-                        sum +=
-                            this.data[i * this.cols + k] *
-                            n.data[k * n.cols + j]
-                    }
-                    result.data[i * result.cols + j] = sum
-                }
-            }
-            this.rows = result.rows
-            this.cols = result.cols
-            this.data = result.data
-            return this
-        } else {
-            this.map((val) => val * n)
+    dot(n: Matrix): Matrix {
+        if (this.cols !== n.rows) {
+            console.error("Columns of A must match Rows of B.")
             return this
         }
+        const result = new Matrix(this.rows, n.cols)
+        for (let i = 0; i < result.rows; i++) {
+            for (let j = 0; j < result.cols; j++) {
+                let sum = 0
+                for (let k = 0; k < this.cols; k++) {
+                    sum += this.data[i * this.cols + k] * n.data[k * n.cols + j]
+                }
+                result.data[i * result.cols + j] = sum
+            }
+        }
+        this.rows = result.rows
+        this.cols = result.cols
+        this.data = result.data
+        return this
     }
-    static multiply(A: Matrix, B: Matrix): Matrix {
+    static dot(A: Matrix, B: Matrix): Matrix {
         if (A.cols !== B.rows) {
             console.error("Columns of A must match rows of B.")
             return A
@@ -201,5 +194,22 @@ export default class Matrix {
             }
         }
         return result
+    }
+    multiply(n: number | Matrix): Matrix {
+        if (n instanceof Matrix) {
+            this.map((val, i, j) => val * n.data[i * this.cols + j])
+        } else {
+            this.map((val) => val * n)
+        }
+        return this
+    }
+    static multiply(m1: Matrix, m2: number | Matrix): Matrix {
+        const m = m1.copy()
+        if (m2 instanceof Matrix) {
+            m.map((val, i, j) => val * m2.data[i * m.cols + j])
+        } else {
+            m.map((val) => val * m2)
+        }
+        return m
     }
 }

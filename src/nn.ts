@@ -48,7 +48,7 @@ export default class NeuralNetwork {
             // query
             let input = Matrix.fromArray(inputs[a])
             for (let i = 0; i < this.weights.length; i++) {
-                input = Matrix.multiply(this.weights[i], input)
+                input = Matrix.dot(this.weights[i], input)
                 input.add(this.biases[i])
                 input.map(this.activation)
             }
@@ -72,7 +72,7 @@ export default class NeuralNetwork {
             let input = Matrix.fromArray(inputs[b])
             O.push(input)
             for (let i = 0; i < this.weights.length; i++) {
-                input = Matrix.multiply(this.weights[i], input)
+                input = Matrix.dot(this.weights[i], input)
                 input.add(this.biases[i])
                 input.map(this.activation)
                 O.push(input)
@@ -81,20 +81,17 @@ export default class NeuralNetwork {
             let error = Matrix.subtract(target, output)
 
             for (let i = O.length - 1; i > 0; i--) {
-                console.log(i)
-                let gradient = Matrix.multiply(
-                    error,
-                    Matrix.map(O[i], this.dactivation)
-                )
-                gradient.multiply(O[i - 1].transpose())
+                let gradient = Matrix.map(O[i], this.dactivation)
+                gradient.multiply(error)
+                gradient.multiply(this.lr)
 
-                gradient.print("gradient")
-                // const dB = Matrix.multiply(gradient, error)
+                this.biases[i - 1].add(gradient)
 
-                error = Matrix.multiply(
-                    Matrix.transpose(this.weights[i]),
-                    error
-                ) // hidden errors
+                const dW = gradient.dot(Matrix.transpose(O[i - 1]))
+
+                error = Matrix.dot(Matrix.transpose(this.weights[i - 1]), error) // hidden errors
+
+                this.weights[i - 1].add(dW)
             }
             // ends
         }
