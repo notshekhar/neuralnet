@@ -57,29 +57,46 @@ export default class NeuralNetwork {
         return O
     }
 
-    train(inputs: Array<number>, targets: Array<number>) {
-        let target = Matrix.fromArray(targets)
-        let O = new Array(this.weights.length)
-        let input = Matrix.fromArray(inputs)
-        for (let i = 0; i < this.weights.length; i++) {
-            input = Matrix.multiply(this.weights[i], input)
-            input.add(this.biases[i])
-            input.map(this.activation)
-            O[i] = input
-        }
-        let output = O[O.length - 1]
-        let error = Matrix.subtract(target, output)
-        let gradient = Matrix.map(output, this.dactivation)
-        gradient.multiply(error)
+    train(inputs: Array<Array<number>>, targets: Array<Array<number>>) {
+        if (inputs.length !== targets.length)
+            throw new Error(
+                "Length og Inputs is not equal to the Target values"
+            )
 
-        gradient.multiply(this.lr)
-        for (let i = O.length - 1; i >= 0; i--) {
-            let dw = Matrix.multiply(this.weights[i], gradient)
-            this.weights[i].add(dw)
-            error = Matrix.multiply(Matrix.transpose(this.weights[i]), error)
-            gradient = Matrix.map(O[i], this.dactivation)
-            gradient.multiply(error)
-            gradient.multiply(this.lr)
+        for (let b = 0; b < targets.length; b++) {
+            // training starts here
+            const target = Matrix.fromArray(targets[b])
+
+            const O = new Array()
+
+            let input = Matrix.fromArray(inputs[b])
+            O.push(input)
+            for (let i = 0; i < this.weights.length; i++) {
+                input = Matrix.multiply(this.weights[i], input)
+                input.add(this.biases[i])
+                input.map(this.activation)
+                O.push(input)
+            }
+            const output = O[O.length - 1]
+            let error = Matrix.subtract(target, output)
+
+            for (let i = O.length - 1; i > 0; i--) {
+                console.log(i)
+                let gradient = Matrix.multiply(
+                    error,
+                    Matrix.map(O[i], this.dactivation)
+                )
+                gradient.multiply(O[i - 1].transpose())
+
+                gradient.print("gradient")
+                // const dB = Matrix.multiply(gradient, error)
+
+                error = Matrix.multiply(
+                    Matrix.transpose(this.weights[i]),
+                    error
+                ) // hidden errors
+            }
+            // ends
         }
     }
 

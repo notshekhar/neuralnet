@@ -53,21 +53,20 @@ export default class Matrix {
 
     copy() {
         let m = new Matrix(this.rows, this.cols)
-        this.rows = m.cols
-        this.cols = m.rows
         for (let i = 0; i < this.rows * this.cols; i++) {
             m.data[i] = this.data[i]
         }
         return m
     }
 
-    print() {
+    print(title?: string) {
         let data = new Array(this.rows).fill(0).map((e, i) =>
             new Array(this.cols).fill(0).map((e, j) => {
                 const index = i * this.cols + j
                 return this.data[index]
             })
         )
+        console.log(title || "", "(", this.rows, "x", this.cols, ")")
         console.table(data)
         return this
     }
@@ -148,6 +147,8 @@ export default class Matrix {
     }
     transpose(): Matrix {
         const m = this.copy()
+        this.cols = m.rows
+        this.rows = m.cols
         for (let i = 0; i < m.rows; i++) {
             for (let j = 0; j < m.cols; j++) {
                 const index = m.cols * i + j
