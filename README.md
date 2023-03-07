@@ -14,8 +14,8 @@ Train and guess:
 // Train the neural network with a training dataset (inputs and expected outputs)
 nn.train(trainingDataInputs, trainingDataTargets);
 
-// Guess for the given testing data is returned as an array (double[])
-nn.query(testingDataSets);
+// Guess for the given testing data is returned as an array (Array(double[]))
+nn.query(testingDataSets) // [[o1, o2, o3...], [o1, o2, o3...]];
 ```
 
 Read and write from/to file:
