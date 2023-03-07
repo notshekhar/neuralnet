@@ -1,0 +1,28 @@
+{
+    "name": "neuralnet",
+    "version": "1.0.0",
+    "description": "Constructors: ```js // Neural network with 2 inputs, 1 hidden layer, 4 hidden nodes and 1 output let nn0 = new NeuralNetwork([2, 4, 1]);",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "dev": "nodemon ./src/index.ts",
+        "build": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/notshekhar/neuralnet.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/notshekhar/neuralnet/issues"
+    },
+    "homepage": "https://github.com/notshekhar/neuralnet#readme",
+    "devDependencies": {
+        "nodemon": "^2.0.20",
+        "typescript": "^4.9.4"
+    },
+    "dependencies": {
+        "ts-node": "^10.9.1"
+    }
+}
